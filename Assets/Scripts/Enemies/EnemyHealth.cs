@@ -23,6 +23,7 @@ public class EnemyHealth : MonoBehaviour
     public void SelfDestruct()
     {
         WaveManager.Instance.AdjustEnemyCount(-1);      // deleting one enemy
+        AudioManager.Instance.PlayEnemyExplosionSFX();      // sfx
         Instantiate(robotExplosionVFX, transform.position, Quaternion.identity);        // vfx
         Destroy(gameObject);
     }
