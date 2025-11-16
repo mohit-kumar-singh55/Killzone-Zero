@@ -1,0 +1,73 @@
+.button:hover {
+    scale: 1.2 1.2;
+    transition-duration: 0.2s, 0.2s;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    border-left-color: rgb(255, 255, 255);
+    border-right-color: rgb(255, 255, 255);
+    border-top-color: rgb(255, 255, 255);
+    border-bottom-color: rgb(255, 255, 255);
+    transition-property: scale border-color;
+}
+
+.button {
+    font-size: 40px;
+    margin-top: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    margin-left: 20px;
+    transition-property: scale, border-width;
+    transition-duration: 0.2s, 0.2s;
+    padding-top: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    width: 200px;
+    border-left-color: rgb(255, 255, 255);
+    border-right-color: rgb(255, 255, 255);
+    border-top-color: rgb(255, 255, 255);
+    border-bottom-color: rgb(255, 255, 255);
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+}
+
+#VisualElement > #OptionsMenu > #Fields > #UnlimitedBulletsToggle > .unity-toggle__input > #unity-checkmark {
+    padding-top: 34px;
+    padding-right: 34px;
+    padding-bottom: 34px;
+    padding-left: 34px;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 300px;
+}
+
+#VisualElement > #OptionsMenu > #Fields > #UnlimitedBulletsToggle:focus > .unity-toggle__label {
+    color: rgb(255, 255, 255);
+}
+
+#VisualElement > #OptionsMenu > #Fields > #Difficulty > .unity-popup-field__input {
+    margin-left: 570px;
+    width: auto;
+    max-width: 400px;
+    min-width: 200px;
+}
+
+#VisualElement > #OptionsMenu > #Fields > #Difficulty:focus > .unity-popup-field__label {
+    color: rgb(255, 255, 255);
+}
+
+#VisualElement > #OptionsMenu > #Fields > #FireType > .unity-popup-field__input {
+    margin-left: 485px;
+    width: auto;
+    max-width: 500px;
+    min-width: 300px;
+}
+
+#VisualElement > #OptionsMenu > #Fields > #FireType:focus > .unity-popup-field__label {
+    color: rgb(255, 255, 255);
+}

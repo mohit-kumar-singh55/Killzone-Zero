@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fffe705ee9d119d4c8df9062038451e1, type: 3}
+  m_Name: DifficultSettings
+  m_EditorClassIdentifier: 
+  enemiesPerWave: 0f0000001900000032000000
+  useTurrets: 1
+  turretFireRate: 1
+  turretFireDamage: 3
+  turretProjectileSpeed: 20
