@@ -4,7 +4,7 @@ using UnityEngine;
 public class Weapon : MonoBehaviour
 {
     [SerializeField] ParticleSystem muzzleFlash;
-    [SerializeField] LayerMask interactionLayers;   // to know what objects can be interacted with raycast
+    [SerializeField] LayerMask interactionLayers;   // to know what objects can be shooted with raycast
     [SerializeField] Transform bulletSpawnPoint;
     [SerializeField] GameObject bulletPrefab;
 
@@ -28,6 +28,9 @@ public class Weapon : MonoBehaviour
 
         // impulse to shake camera
         impulseSource.GenerateImpulse();
+
+        // playing sfx
+        AudioManager.Instance.PlayGunShotSFX();
 
         // raycast shoot
         if (fireTypeManager.CurrentFireType == FireType.Raycast) HitScanShoot(weaponSO);
