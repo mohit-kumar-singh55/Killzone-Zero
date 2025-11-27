@@ -5,7 +5,7 @@
 FPSサバイバルゲームです。
 敵の攻撃を避け、武器とライフを管理しながら、最後のウェーブまで生存できれば勝利です。
 
-<img src="./Assets/Art/UI/read_me_banner.png" alt="Banner Image">
+<img src="./Assets/Art/UI/read_me_banner.webp" alt="Banner Image">
 
 ## ■ 使用エンジン
 
