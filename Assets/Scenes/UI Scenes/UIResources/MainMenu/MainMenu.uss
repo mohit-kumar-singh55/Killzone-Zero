@@ -1,41 +1,65 @@
-.button:hover {
-    scale: 1.2 1.2;
-    transition-duration: 0.2s, 0.2s;
-    border-top-width: 0;
-    border-right-width: 0;
-    border-bottom-width: 0;
-    border-left-width: 0;
-    border-left-color: rgb(255, 255, 255);
-    border-right-color: rgb(255, 255, 255);
-    border-top-color: rgb(255, 255, 255);
-    border-bottom-color: rgb(255, 255, 255);
-    transition-property: scale border-color;
-}
-
 .button {
     font-size: 40px;
     margin-top: 20px;
     margin-right: 20px;
     margin-bottom: 20px;
     margin-left: 20px;
-    transition-property: scale, border-width;
-    transition-duration: 0.2s, 0.2s;
+    transition-property: scale;
+    transition-duration: 0.2s;
     padding-top: 10px;
     padding-right: 10px;
     padding-bottom: 10px;
     padding-left: 10px;
     width: 200px;
-    border-left-color: rgb(255, 255, 255);
-    border-right-color: rgb(255, 255, 255);
-    border-top-color: rgb(255, 255, 255);
-    border-bottom-color: rgb(255, 255, 255);
+    color: rgb(255, 255, 255);
+    text-shadow: 2px 2px 5px rgba(197, 39, 39, 0.3);
+}
+
+.button:hover {
+    scale: 1.2 1.2;
+    transition-duration: 0.2s;
+    transition-property: scale;
+}
+
+.back_button {
+    color: rgb(255, 255, 255);
+    font-size: 70px;
+    -unity-font-definition: url("project://database/Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Fonts/PerfectDOSVGA437.ttf?fileID=12800000&guid=74a5091d8707f334b9a5c31ef71a64ba&type=3#PerfectDOSVGA437");
+    background-color: rgba(188, 188, 188, 0);
+    border-left-color: rgba(149, 149, 149, 0);
+    border-right-color: rgba(149, 149, 149, 0);
+    border-top-color: rgba(149, 149, 149, 0);
+    border-bottom-color: rgba(149, 149, 149, 0);
     border-top-width: 0;
     border-right-width: 0;
     border-bottom-width: 0;
     border-left-width: 0;
+    -unity-font-style: italic;
+    text-shadow: 2px 2px 10px rgba(54, 150, 220, 0.23);
+    transition-duration: 0.2s;
 }
 
-#VisualElement > #OptionsMenu > #Fields > #UnlimitedBulletsToggle > .unity-toggle__input > #unity-checkmark {
+.back_button:hover {
+    scale: 1.2 1.2;
+}
+
+.unity-popup-field__label {
+    text-shadow: 2px 2px 5px rgba(255, 0, 0, 0.3);
+}
+
+.unity-toggle__label {
+    text-shadow: 2px 2px 5px rgba(255, 0, 0, 0.3);
+}
+
+*:focus > .unity-toggle__label {
+    color: rgb(255, 255, 255);
+}
+
+*:focus > .unity-popup-field__label {
+    color: rgb(255, 255, 255);
+}
+
+.unity-toggle__input > #unity-checkmark {
     padding-top: 34px;
     padding-right: 34px;
     padding-bottom: 34px;
@@ -44,30 +68,62 @@
     margin-right: 0;
     margin-bottom: 0;
     margin-left: 300px;
+    -unity-background-image-tint-color: rgb(197, 39, 39);
+    background-color: rgba(54, 150, 220, 0.54);
+    border-top-left-radius: 22px;
+    border-top-right-radius: 22px;
+    border-bottom-right-radius: 22px;
+    border-bottom-left-radius: 22px;
+    background-image: none;
+    scale: 1.3 1.3;
+    border-left-color: rgb(197, 39, 39);
+    border-right-color: rgb(197, 39, 39);
+    border-top-color: rgb(197, 39, 39);
+    border-bottom-color: rgb(197, 39, 39);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
 }
 
-#VisualElement > #OptionsMenu > #Fields > #UnlimitedBulletsToggle:focus > .unity-toggle__label {
-    color: rgb(255, 255, 255);
+#UnlimitedBulletsToggle:checked > .unity-toggle__input > #unity-checkmark {
+    background-image: url("project://database/Assets/Art/UI/icon.png?fileID=21300000&guid=c215e6bd5ab4da447a4683d6fca53223&type=3#icon");
 }
 
-#VisualElement > #OptionsMenu > #Fields > #Difficulty > .unity-popup-field__input {
+.unity-popup-field__input {
+    background-color: rgba(54, 150, 220, 0.3);
+    border-top-left-radius: 22px;
+    border-top-right-radius: 22px;
+    border-bottom-right-radius: 22px;
+    border-bottom-left-radius: 22px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(197, 39, 39);
+    border-right-color: rgb(197, 39, 39);
+    border-top-color: rgb(197, 39, 39);
+    border-bottom-color: rgb(197, 39, 39);
+}
+
+#Difficulty > .unity-popup-field__input {
     margin-left: 570px;
     width: auto;
     max-width: 400px;
     min-width: 200px;
 }
 
-#VisualElement > #OptionsMenu > #Fields > #Difficulty:focus > .unity-popup-field__label {
-    color: rgb(255, 255, 255);
-}
-
-#VisualElement > #OptionsMenu > #Fields > #FireType > .unity-popup-field__input {
+#FireType > .unity-popup-field__input {
     margin-left: 485px;
     width: auto;
     max-width: 500px;
     min-width: 300px;
 }
 
-#VisualElement > #OptionsMenu > #Fields > #FireType:focus > .unity-popup-field__label {
-    color: rgb(255, 255, 255);
+.unity-base-popup-field__text {
+    text-shadow: 2px 2px 5px rgba(197, 39, 39, 0.4);
+}
+
+.unity-base-popup-field__arrow {
+    -unity-background-image-tint-color: rgb(197, 39, 39);
 }
