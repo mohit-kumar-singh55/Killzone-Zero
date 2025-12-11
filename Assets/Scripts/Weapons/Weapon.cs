@@ -44,19 +44,16 @@ public class Weapon : MonoBehaviour
     // raycast shoot
     void HitScanShoot(WeaponSO weaponSO)
     {
-        RaycastHit hit;
-
-        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, Mathf.Infinity, interactionLayers, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out RaycastHit hit, Mathf.Infinity, interactionLayers, QueryTriggerInteraction.Ignore))
         {
             // hit vfx
             Instantiate(weaponSO.HitVFXPrefab, hit.point, Quaternion.identity);
             // enemy health
             EnemyHealth enemyHealth = hit.collider.GetComponentInParent<EnemyHealth>();
-            enemyHealth.TakeDamage(weaponSO.Damage);
+            if (enemyHealth) enemyHealth.TakeDamage(weaponSO.Damage);
         }
     }
 
     // bullet shoot
-    // TODO: change this to object pooling
     void ProjectileShoot() => Instantiate(bulletPrefab, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
 }

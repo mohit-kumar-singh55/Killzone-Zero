@@ -40,7 +40,6 @@ public class Turret : MonoBehaviour
         while (_player)
         {
             yield return new WaitForSeconds(fireRate);
-            // TODO: change to object pooling
             Projectile newProjectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity).GetComponent<Projectile>();
             newProjectile.transform.LookAt(_playerTargetPoint);
             newProjectile.Init(damage);

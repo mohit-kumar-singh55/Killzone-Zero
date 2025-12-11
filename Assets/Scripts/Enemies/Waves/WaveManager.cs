@@ -9,21 +9,24 @@ public class WaveManager : MonoBehaviour
 {
     public static WaveManager Instance { get; private set; }
 
+    #region Serialize Fields
     [Tooltip("総ウェーブ数と各ウェーブに対応する敵数")]
     [SerializeField] int[] enemiesPerWave;                  // 難易度設定によって上書きされる
     [Range(1f, 10f)][SerializeField] float timeBetweenEnemiesSpawn = 2f;
     [Tooltip("最終ウェーブ終了から次のウェーブ開始までの時間")]
     [SerializeField] int timeBetweenWaves = 10;
+    #endregion
 
+    #region Private Fields
     private PlayerHealth _player;
     private UIManager _uIManager;
-
     private SpawnGate[] _spawnGates;
     private int _totalNoOfWaves;
     private int _currentWave;
     private bool _isUnderWave = false;
     private int _timer = 0;
     private int _enemyCount = 0;
+    #endregion
 
     public static event Action OnWin = delegate { };
 
