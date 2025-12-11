@@ -1,24 +1,27 @@
 using Cinemachine;
 using UnityEngine;
 
+/// <summary>
+/// 現在の射撃タイプに応じてレイキャストまたは弾丸を発射する機能を提供するクラス
+/// </summary>
 public class Weapon : MonoBehaviour
 {
     [SerializeField] ParticleSystem muzzleFlash;
-    [SerializeField] LayerMask interactionLayers;   // to know what objects can be shooted with raycast
+    [SerializeField] LayerMask interactionLayers;   // レイキャストで撃てるオブジェクトを判別するため
     [SerializeField] Transform bulletSpawnPoint;
     [SerializeField] GameObject bulletPrefab;
 
-    CinemachineImpulseSource impulseSource;
-    FireTypeManager fireTypeManager;
+    private CinemachineImpulseSource _impulseSource;
+    private FireTypeManager _fireTypeManager;
 
     void Awake()
     {
-        impulseSource = GetComponent<CinemachineImpulseSource>();
+        _impulseSource = GetComponent<CinemachineImpulseSource>();
     }
 
     void Start()
     {
-        fireTypeManager = FireTypeManager.Instance;
+        _fireTypeManager = FireTypeManager.Instance;
     }
 
     public void Shoot(WeaponSO weaponSO)
@@ -27,13 +30,13 @@ public class Weapon : MonoBehaviour
         muzzleFlash.Play();
 
         // impulse to shake camera
-        impulseSource.GenerateImpulse();
+        _impulseSource.GenerateImpulse();
 
         // playing sfx
         AudioManager.Instance.PlayGunShotSFX();
 
         // raycast shoot
-        if (fireTypeManager.CurrentFireType == FireType.Raycast) HitScanShoot(weaponSO);
+        if (_fireTypeManager.CurrentFireType == FireType.Raycast) HitScanShoot(weaponSO);
         // bullet shoot
         else ProjectileShoot();
     }
@@ -49,7 +52,7 @@ public class Weapon : MonoBehaviour
             Instantiate(weaponSO.HitVFXPrefab, hit.point, Quaternion.identity);
             // enemy health
             EnemyHealth enemyHealth = hit.collider.GetComponentInParent<EnemyHealth>();
-            enemyHealth?.TakeDamage(weaponSO.Damage);
+            enemyHealth.TakeDamage(weaponSO.Damage);
         }
     }
 

@@ -1,28 +1,31 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// ウェーブ開始、敵数の調整、プレイヤー勝利判定など、敵ウェーブ全体を管理するクラス
+/// </summary>
 public class WaveManager : MonoBehaviour
 {
     public static WaveManager Instance { get; private set; }
 
-    [Tooltip("Total no. of waves and enemies related to each wave")]
-    [SerializeField] int[] enemiesPerWave;                  // will be overwritten by difficulty setting
+    [Tooltip("総ウェーブ数と各ウェーブに対応する敵数")]
+    [SerializeField] int[] enemiesPerWave;                  // 難易度設定によって上書きされる
     [Range(1f, 10f)][SerializeField] float timeBetweenEnemiesSpawn = 2f;
-    [Tooltip("Time between last wave ends and next wave starts")]
+    [Tooltip("最終ウェーブ終了から次のウェーブ開始までの時間")]
     [SerializeField] int timeBetweenWaves = 10;
 
-    PlayerHealth player;
-    UIManager uIManager;
+    private PlayerHealth _player;
+    private UIManager _uIManager;
 
-    SpawnGate[] spawnGates;
-    int totalNoOfWaves;
-    int currentWave;
-    bool isUnderWave = false;
-    int timer = 0;
-    int enemyCount = 0;
+    private SpawnGate[] _spawnGates;
+    private int _totalNoOfWaves;
+    private int _currentWave;
+    private bool _isUnderWave = false;
+    private int _timer = 0;
+    private int _enemyCount = 0;
 
-    public delegate void WinSequence();
-    public static event WinSequence OnWin;
+    public static event Action OnWin = delegate { };
 
     void Awake()
     {
@@ -37,48 +40,50 @@ public class WaveManager : MonoBehaviour
 
     void Start()
     {
-        // ** overriding some settings as per difficulty **
+        // ** 難易度に応じて一部の設定を上書きする **
         DifficultySettings settings = DifficultyManager.Instance?.CurrentSettings;
         enemiesPerWave = settings.enemiesPerWave;
 
         // initialize
-        totalNoOfWaves = enemiesPerWave.Length;
-        currentWave = 0;        // no wave
+        _totalNoOfWaves = enemiesPerWave.Length;
+        _currentWave = 0;        // no wave
 
-        uIManager = UIManager.Instance;
+        _uIManager = UIManager.Instance;
 
-        player = FindFirstObjectByType<PlayerHealth>();
-        spawnGates = FindObjectsByType<SpawnGate>(FindObjectsSortMode.None);
+        _player = FindFirstObjectByType<PlayerHealth>();
+        _spawnGates = FindObjectsByType<SpawnGate>(FindObjectsSortMode.None);
 
-        // first wave (最初の波)
+        // 最初の波
         StartNextWave();
     }
 
     void LateUpdate()
     {
-        // stop if player is dead (死んだら止める)
-        if (player == null) StopAllCoroutines();
+        // 死んだら止める
+        if (_player == null) StopAllCoroutines();
 
-        // if all enemies are dead and not last wave, start next wave (全ての敵が死んだら次の波を始める)
-        if (currentWave < totalNoOfWaves && !isUnderWave && enemyCount <= 0 && timer <= 0) StartCoroutine(StartTimerAndNextWave());
+        // 全ての敵が死んだら次の波を始める
+        if (_currentWave < _totalNoOfWaves && !_isUnderWave && _enemyCount <= 0 && _timer <= 0) StartCoroutine(StartTimerAndNextWave());
         // win
-        else if (currentWave >= totalNoOfWaves && enemyCount <= 0) OnPlayerWin();
+        else if (_currentWave >= _totalNoOfWaves && _enemyCount <= 0) OnPlayerWin();
     }
 
+    // 次の波
     void StartNextWave()
     {
-        if (currentWave >= totalNoOfWaves || player == null) return;
+        if (_currentWave >= _totalNoOfWaves || _player == null) return;
 
-        currentWave++;
-        StartCoroutine(StartWave(currentWave - 1));
+        _currentWave++;
+        StartCoroutine(StartWave(_currentWave - 1));
 
-        uIManager.SetCurrentWaveCountText(currentWave);
+        _uIManager.SetCurrentWaveCountText(_currentWave);
     }
 
+    // 敵数の調整
     public void AdjustEnemyCount(int amount)
     {
-        enemyCount += amount;
-        UIManager.Instance.SetEnemyLeftText(enemyCount);
+        _enemyCount += amount;
+        _uIManager.SetEnemyLeftText(_enemyCount);
     }
 
     void OnPlayerWin()
@@ -89,35 +94,35 @@ public class WaveManager : MonoBehaviour
 
     IEnumerator StartWave(int waveIndex)
     {
-        isUnderWave = true;
+        _isUnderWave = true;
 
         for (int i = 0; i < enemiesPerWave[waveIndex]; i++)
         {
-            // change it to object pooling later (後でオブジェクトプールに変更する)
-            spawnGates[Random.Range(0, spawnGates.Length)].SpawnEnemy();
+            // ランダムに敵を出現させる
+            _spawnGates[UnityEngine.Random.Range(0, _spawnGates.Length)].SpawnEnemy();
             AdjustEnemyCount(1);
             yield return new WaitForSeconds(timeBetweenEnemiesSpawn);
         }
 
-        isUnderWave = false;
+        _isUnderWave = false;
     }
 
     IEnumerator StartTimerAndNextWave()
     {
-        uIManager.ShowWaveCountdown(true);
-        timer = 0;
+        _uIManager.ShowWaveCountdown(true);
+        _timer = 0;
 
-        while (timer < timeBetweenWaves)
+        while (_timer < timeBetweenWaves)
         {
-            timer++;
-            uIManager.SetWaveCountdownText(timeBetweenWaves - timer);
+            _timer++;
+            _uIManager.SetWaveCountdownText(timeBetweenWaves - _timer);
             yield return new WaitForSeconds(1f);
         }
 
-        // start next wave (次の波を始める)
+        // 次の波を始める
         StartNextWave();
 
-        timer = 0;
-        uIManager.ShowWaveCountdown(false);
+        _timer = 0;
+        _uIManager.ShowWaveCountdown(false);
     }
 }

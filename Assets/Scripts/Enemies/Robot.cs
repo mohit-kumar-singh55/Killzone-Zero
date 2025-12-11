@@ -2,35 +2,32 @@ using StarterAssets;
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent), typeof(EnemyHealth))]
 public class Robot : MonoBehaviour
 {
-    FirstPersonController player;
-    NavMeshAgent agent;
-
-    const string PLAYER_STRING = "Player";
+    private FirstPersonController _player;
+    private EnemyHealth _enemyHealth;
+    private NavMeshAgent _agent;
 
     void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
+        _agent = GetComponent<NavMeshAgent>();
+        _enemyHealth = GetComponent<EnemyHealth>();
     }
 
     void Start()
     {
-        player = FindFirstObjectByType<FirstPersonController>();
+        _player = FindFirstObjectByType<FirstPersonController>();
     }
 
     void Update()
     {
-        if (!player) return;
-        if (agent.enabled) agent.SetDestination(player.transform.position);
+        if (!_player) return;
+        if (_agent.enabled) _agent.SetDestination(_player.transform.position);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag(PLAYER_STRING))
-        {
-            EnemyHealth enemyHealth = GetComponent<EnemyHealth>();
-            enemyHealth.SelfDestruct();
-        }
+        if (other.CompareTag(TAGS.PLAYER)) _enemyHealth.SelfDestruct();
     }
 }

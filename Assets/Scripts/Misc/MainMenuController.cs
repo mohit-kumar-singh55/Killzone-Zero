@@ -32,21 +32,21 @@ public class MainMenuController : MonoBehaviour
             return;
         }
 
-        // Access the _root VisualElement
+        // _root VisualElement にアクセスする
         _root = mainMenuUI.rootVisualElement;
 
-        // fetch checkpoint toggle
+        // チェックボックス用トグルを取得
         Toggle unlimitedBulletsToggle = _root.Q<Toggle>(unlimitedBulletsCheckbox);
 
-        // ** setting up UIs **
+        // ** UI のセットアップ **
         _menuUI = _root.Q(mainMenu);
         _optionsUI = _root.Q(optionsMenu);
         _instructionsUI = _root.Q(instructionsMenu);
 
-        // resetting menu
+        // メニューをリセットする
         Back();
 
-        // ** adding listeners **
+        // ** リスナーのセットアップ **
         GetButton(startButton).clicked += LoadNewGame;
         GetButton(quitButton).clicked += Quit;
         GetButton(optionsButton).clicked += () => ShowUI(_optionsUI);
@@ -54,20 +54,20 @@ public class MainMenuController : MonoBehaviour
         List<Button> backButtons = GetButtons(backButton);
         backButtons.ForEach(b => b.clicked += Back);
 
-        // ** setting unlimitedBullets toggle **
-        unlimitedBulletsToggle.value = PlayerPrefs.GetInt(UnlimitedBulletsManager.UNLIMITED_BULLETS_KEY, 1) == 1;    // 0=off, 1=on
-        unlimitedBulletsToggle.RegisterValueChangedCallback(evt => PlayerPrefs.SetInt(UnlimitedBulletsManager.UNLIMITED_BULLETS_KEY, evt.newValue ? 1 : 0));
+        // ** unlimitedBullets トグルを設定する **
+        unlimitedBulletsToggle.value = PlayerPrefs.GetInt(PLAYER_PREFS.UNLIMITED_BULLETS_KEY, 1) == 1;    // 0=off, 1=on
+        unlimitedBulletsToggle.RegisterValueChangedCallback(evt => PlayerPrefs.SetInt(PLAYER_PREFS.UNLIMITED_BULLETS_KEY, evt.newValue ? 1 : 0));
 
-        // ** setting fire type dropdown **
+        // ** 射撃タイプのドロップダウンを設定する **
         DropdownField fireTypeDropdown = _root.Q<DropdownField>(fireTypeDropdownText);
 
-        fireTypeDropdown.index = PlayerPrefs.GetInt(FireTypeManager.FIRE_TYPE_KEY, 0);
+        fireTypeDropdown.index = PlayerPrefs.GetInt(PLAYER_PREFS.FIRE_TYPE_KEY, 0);
         fireTypeDropdown.RegisterValueChangedCallback(evt =>
         {
             string val = evt.newValue;
             int idx = fireTypeDropdown.choices.IndexOf(val);
 
-            PlayerPrefs.SetInt(FireTypeManager.FIRE_TYPE_KEY, idx);
+            PlayerPrefs.SetInt(PLAYER_PREFS.FIRE_TYPE_KEY, idx);
             PlayerPrefs.Save();
         });
 
@@ -75,12 +75,12 @@ public class MainMenuController : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    Button GetButton(string name) => _root.Q<Button>(name);
-    List<Button> GetButtons(string name) => _root.Query<Button>(name).ToList();
+    private Button GetButton(string name) => _root.Q<Button>(name);
+    private List<Button> GetButtons(string name) => _root.Query<Button>(name).ToList();
 
-    public void LoadNewGame() => SceneLoader.LoadScene(2);
+    public void LoadNewGame() => SceneLoader.LoadScene(SCENES.MAIN_LEVEL);
 
-    void ShowUI(VisualElement ui)
+    private void ShowUI(VisualElement ui)
     {
         _menuUI.style.display = DisplayStyle.None;
         ui.style.display = DisplayStyle.Flex;
@@ -98,7 +98,7 @@ public class MainMenuController : MonoBehaviour
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
-            Application.Quit();
+        Application.Quit();
 #endif
     }
 }

@@ -7,7 +7,7 @@ public class DifficultyManager : MonoBehaviour
 {
     public static DifficultyManager Instance { get; private set; }
 
-    // default setting to Normal (デフォルト設定をノーマルにする)
+    // デフォルト設定をノーマルにする
     [SerializeField] GameDifficulty currentDifficulty = GameDifficulty.Normal;
 
     [Header("Scriptable Objects")]
@@ -38,16 +38,12 @@ public class DifficultyManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    /// <summary>
-    /// Loads the current difficulty from player prefs, defaulting to the value of currentDifficulty if not found.
-    /// Also sets up a listener for the dropdown menu to set the difficulty when changed.
-    /// player prefsから現在の難易度を読み込み、見つからない場合はcurrentDifficultyの値を使用し、dropdownメニューが変更されたときに難易度を設定します。
-    /// </summary>
+    // player prefsから現在の難易度を読み込み、見つからない場合はcurrentDifficultyの値を使用し、
+    // dropdownメニューが変更されたときに難易度を設定します。
     void Start()
     {
-        // load from player prefs or default to normal
         // player prefsから読み込むか、デフォルトをノーマルにする
-        int saved = PlayerPrefs.GetInt(nameof(GameDifficulty), (int)currentDifficulty);  // 0=Easy, 1=Normal, 2=Hard
+        int saved = PlayerPrefs.GetInt(nameof(GameDifficulty), (int)currentDifficulty);  // 0=簡単, 1=普通, 2=難しい
         currentDifficulty = (GameDifficulty)saved;
 
         FetchUI();
@@ -62,7 +58,6 @@ public class DifficultyManager : MonoBehaviour
             SetDifficulty(idx);
         });
 
-        // apply default setting for the first time the game loads if there is no saved setting
         // 初回ゲームロード時に保存された設定がない場合、デフォルト設定を適用する
         SetDifficulty(saved);
     }
@@ -74,14 +69,11 @@ public class DifficultyManager : MonoBehaviour
         PlayerPrefs.Save();
 
         ApplySettings();
-
-        // Debug.Log("Difficulty set to " + currentDifficulty);
     }
 
     /// <summary>
-    /// Applies the appropriate difficulty settings based on the current difficulty level.
-    /// Updates the CurrentSettings field to match the selected GameDifficulty.
-    /// 現在の難易度に基づいて適切な難易度設定を適用します。CurrentSettingsフィールドを選択されたGameDifficultyに合わせて更新します。
+    /// 現在の難易度に基づいて適切な難易度設定を適用します。
+    /// CurrentSettingsフィールドを選択されたGameDifficultyに合わせて更新します。
     /// </summary>
     void ApplySettings()
     {
@@ -101,10 +93,10 @@ public class DifficultyManager : MonoBehaviour
             return;
         }
 
-        // Access the root VisualElement
+        // ルートの VisualElement にアクセスする
         root = mainMenuUI.rootVisualElement;
     }
 
-    // need to destroy it when going back to main menu scene
+    // メインメニューシーンに戻る際に破棄する必要がある
     public void DestroyDifficultyManager() => Destroy(gameObject);
 }

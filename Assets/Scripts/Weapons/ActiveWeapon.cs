@@ -3,109 +3,129 @@ using StarterAssets;
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// 射撃・ズーム・UI 更新など、アクティブな武器の状態と挙動を管理するクラス
+/// </summary>
+[RequireComponent(typeof(Animator))]
 public class ActiveWeapon : MonoBehaviour
 {
+    #region Serialized Fields
     [SerializeField] WeaponSO startingWeaponSO;
     [SerializeField] CinemachineVirtualCamera playerFollowCamera;
     [SerializeField] Camera weaponCamera;
     [SerializeField] GameObject zoomVignette;
     [SerializeField] TMP_Text ammoText;
+    #endregion
 
-    WeaponSO currentWeaponSO;
-    Animator animator;
-    StarterAssetsInputs starterAssetsInputs;
-    FirstPersonController firstPersonController;
-    Weapon currentWeapon;
+    #region Private Fields
+    private WeaponSO _currentWeaponSO;
+    private Animator _animator;
+    private StarterAssetsInputs _starterAssetsInputs;
+    private FirstPersonController _firstPersonController;
+    private Weapon _currentWeapon;
+    private GameManager _gameManager;
+
+    private float _timeSinceLastShot = 0f;
+    private float _defaultFOV;
+    private float _defaultRotationSpeed;
+    private int _currentAmmo;
+    #endregion
 
     const string SHOOT_STRING = "Shoot";
 
-    float timeSinceLastShot = 0f;
-    float defaultFOV;
-    float defaultRotationSpeed;
-    int currentAmmo;
+    void OnEnable()
+    {
+        StarterAssetsInputs.OnShootEvent += HandleShoot;
+        StarterAssetsInputs.OnZoomEvent += HandleZoom;
+    }
+
+    void OnDisable()
+    {
+        StarterAssetsInputs.OnShootEvent -= HandleShoot;
+        StarterAssetsInputs.OnZoomEvent -= HandleZoom;
+    }
 
     private void Awake()
     {
-        starterAssetsInputs = GetComponentInParent<StarterAssetsInputs>();
-        firstPersonController = GetComponentInParent<FirstPersonController>();
-        animator = GetComponent<Animator>();
-        defaultFOV = playerFollowCamera.m_Lens.FieldOfView;
-        defaultRotationSpeed = firstPersonController.RotationSpeed;
+        _animator = GetComponent<Animator>();
     }
 
     void Start()
     {
+        // initialize
+        _gameManager = GameManager.Instance;
+        _starterAssetsInputs = GetComponentInParent<StarterAssetsInputs>();
+        _firstPersonController = GetComponentInParent<FirstPersonController>();
+
+        _defaultFOV = playerFollowCamera.m_Lens.FieldOfView;
+        _defaultRotationSpeed = _firstPersonController.RotationSpeed;
+
+        // 初期武器をセットアップする
         SwitchWeapon(startingWeaponSO);
-        // AdjustAmmo(currentWeaponSO.magazineSize);
+        // AdjustAmmo(_currentWeaponSO.magazineSize);
     }
 
     void Update()
     {
-        if (GameManager.Instance.MenuActive) return;
-
-        // ** currently we are firing these functions every frame **
-        // TODO: so change it to event based
-        HandleShoot();
-        HandleZoom();
+        _timeSinceLastShot += Time.deltaTime;
     }
 
     public void AdjustAmmo(int amount)
     {
-        currentAmmo += amount;
+        _currentAmmo += amount;
 
-        if (currentAmmo > currentWeaponSO.MagazineSize) currentAmmo = currentWeaponSO.MagazineSize;
+        if (_currentAmmo > _currentWeaponSO.MagazineSize) _currentAmmo = _currentWeaponSO.MagazineSize;
 
-        ammoText.text = currentAmmo.ToString("D2");
+        ammoText.text = _currentAmmo.ToString("D2");
     }
 
-    void HandleShoot()
+    void HandleShoot(bool shoot)
     {
-        timeSinceLastShot += Time.deltaTime;
+        if (!shoot || _gameManager.MenuActive) return;
 
-        if (!starterAssetsInputs.shoot) return;
-
-        if (timeSinceLastShot >= currentWeaponSO.FireRate && currentAmmo > 0)
+        // もし発射間隔を過ぎたら発射
+        if (_timeSinceLastShot >= _currentWeaponSO.FireRate && _currentAmmo > 0)
         {
-            currentWeapon.Shoot(currentWeaponSO);
-            animator.Play(SHOOT_STRING, 0, 0f);
-            timeSinceLastShot = 0f;
+            _currentWeapon.Shoot(_currentWeaponSO);
+            _animator.Play(SHOOT_STRING, 0, 0f);
+            _timeSinceLastShot = 0f;
             if (!UnlimitedBulletsManager.Instance.UnlimitedBullets) AdjustAmmo(-1);
         }
 
-        if (!currentWeaponSO.IsAutomatic)
+        if (!_currentWeaponSO.IsAutomatic)
         {
-            starterAssetsInputs.ShootInput(false);
+            _starterAssetsInputs.ShootInput(false);
         }
     }
 
     public void SwitchWeapon(WeaponSO weaponSO)
     {
-        if (currentWeapon) Destroy(currentWeapon.gameObject);
+        if (_currentWeapon) Destroy(_currentWeapon.gameObject);
 
         Weapon newWeapon = Instantiate(weaponSO.WeaponPrefab, transform).GetComponent<Weapon>();
-        currentWeapon = newWeapon;
-        currentWeaponSO = weaponSO;
+        _currentWeapon = newWeapon;
+        _currentWeaponSO = weaponSO;
 
-        AdjustAmmo(currentWeaponSO.MagazineSize);
+        AdjustAmmo(_currentWeaponSO.MagazineSize);
     }
 
-    void HandleZoom()
+    void HandleZoom(bool zoom)
     {
-        if (!currentWeaponSO.CanZoom) return;
+        if (!_currentWeaponSO.CanZoom || _gameManager.MenuActive) return;
 
-        if (starterAssetsInputs.zoom)
+        if (zoom)
         {
             zoomVignette.SetActive(true);
-            playerFollowCamera.m_Lens.FieldOfView = currentWeaponSO.ZoomAmount;
-            weaponCamera.fieldOfView = currentWeaponSO.ZoomAmount;
-            firstPersonController.ChangeRotationSpeed(currentWeaponSO.ZoomRotationSpeed);
+            playerFollowCamera.m_Lens.FieldOfView = _currentWeaponSO.ZoomAmount;
+            weaponCamera.fieldOfView = _currentWeaponSO.ZoomAmount;
+            _firstPersonController.ChangeRotationSpeed(_currentWeaponSO.ZoomRotationSpeed);
         }
         else
         {
             zoomVignette.SetActive(false);
-            playerFollowCamera.m_Lens.FieldOfView = defaultFOV;
-            weaponCamera.fieldOfView = defaultFOV;
-            firstPersonController.ChangeRotationSpeed(defaultRotationSpeed);
+            playerFollowCamera.m_Lens.FieldOfView = _defaultFOV;
+            weaponCamera.fieldOfView = _defaultFOV;
+            _firstPersonController.ChangeRotationSpeed(_defaultRotationSpeed);
         }
     }
 }

@@ -6,8 +6,6 @@ public class FireTypeManager : MonoBehaviour
 {
     public static FireTypeManager Instance { get; private set; }
 
-    public static readonly string FIRE_TYPE_KEY = "FireType";
-
     private FireType currentFireType;
 
     public FireType CurrentFireType { get => currentFireType; }
@@ -25,7 +23,7 @@ public class FireTypeManager : MonoBehaviour
 
     void Start()
     {
-        // load from player prefs or default to raycast
-        currentFireType = (FireType)PlayerPrefs.GetInt(FIRE_TYPE_KEY, (int)FireType.Raycast);
+        // PlayerPrefs から読み込む／なければレイキャストをデフォルトとして使用する
+        currentFireType = (FireType)PlayerPrefs.GetInt(PLAYER_PREFS.FIRE_TYPE_KEY, (int)FireType.Raycast);
     }
 }

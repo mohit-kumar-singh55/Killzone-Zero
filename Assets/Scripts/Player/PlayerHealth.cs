@@ -1,19 +1,21 @@
+using System;
 using Cinemachine;
 using StarterAssets;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerHealth : MonoBehaviour
+/// <summary>
+/// PlayerHealth クラスは、プレイヤーの体力管理、UI 更新、ゲームオーバー／勝利イベントを担当するクラス
+/// </summary>
+public class PlayerHealth : Health
 {
-    [Range(1, 10)]
-    [SerializeField] int startingHealth = 5;
     [SerializeField] CinemachineVirtualCamera deathVirtualCamera;
     [SerializeField] Transform weaponCamera;
     [SerializeField] Image[] shieldBars;
 
-    int currentHealth;
-    int gameOverVirCamPriority = 20;
-    GameManager gameManager;
+    private int _gameOverVirCamPriority = 20;
+
+    public static event Action OnPlayerDie = delegate { };
 
     void OnEnable()
     {
@@ -25,33 +27,27 @@ public class PlayerHealth : MonoBehaviour
         WaveManager.OnWin -= PlayerWin;
     }
 
-    void Awake()
+    protected override void Awake()
     {
-        currentHealth = startingHealth;
+        base.Awake();
         AdjustShieldUI();
     }
 
-    void Start()
+    public override void TakeDamage(int amount)
     {
-        gameManager = GameManager.Instance;
-    }
-
-    public void TakeDamage(int amount)
-    {
-        if (gameManager.GameEnded) return;
-
-        currentHealth -= amount;
+        base.TakeDamage(amount);
 
         // changing ui
         AdjustShieldUI();
 
         if (currentHealth <= 0)
         {
+            // 死んでいなければ、リスポーンする
             bool isDead = PlayerManager.Instance.OnLiveLost(transform);
 
-            // dead
+            // 死んだらゲームオーバー
             if (isDead) PlayerGameOver();
-            // refill health for respawn (死んだらリスポーンする)
+            // 死んでいなければ、UIをリセット
             else
             {
                 currentHealth = startingHealth;
@@ -62,21 +58,21 @@ public class PlayerHealth : MonoBehaviour
 
     void PlayerGameOver()
     {
-        gameManager.TriggerLose();
+        OnPlayerDie?.Invoke();  // プレイヤーの死亡を通知
 
-        // transitioning camera to game over (death) virtual camera (カメラをゲームオーバーの仮想カメラに変更する)
+        // カメラをゲームオーバーの仮想カメラに変更する
         weaponCamera.parent = null;
-        deathVirtualCamera.Priority = gameOverVirCamPriority;
+        deathVirtualCamera.Priority = _gameOverVirCamPriority;
 
-        // unlocking cursor
-        StarterAssetsInputs starterAssetsInputs = FindFirstObjectByType<StarterAssetsInputs>();
-        starterAssetsInputs.SetCursorState(false);
-
-        // destroying player
+        // プレイヤーを破棄する
         Destroy(gameObject);
     }
 
-    void PlayerWin() => enabled = false;
+    void PlayerWin()
+    {
+        enabled = false;
+        if (TryGetComponent(out FirstPersonController fpc)) fpc.enabled = false;
+    }
 
     void AdjustShieldUI()
     {

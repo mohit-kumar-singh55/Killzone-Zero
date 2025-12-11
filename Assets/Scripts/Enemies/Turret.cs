@@ -5,18 +5,18 @@ public class Turret : MonoBehaviour
 {
     [SerializeField] GameObject projectilePrefab;
     [SerializeField] Transform turretHead;
-    [SerializeField] Transform playerTargetPoint;
+    [SerializeField] Transform _playerTargetPoint;
     [SerializeField] Transform projectileSpawnPoint;
     [SerializeField] float fireRate = 2f;
     [SerializeField] int damage = 2;
 
-    PlayerHealth player;
+    private PlayerHealth _player;
 
     private void Start()
     {
-        // ** overriding some settings as per difficulty (難易度に応じて設定を上書き) **
+        // ** 難易度に応じて設定を上書き **
         DifficultySettings settings = DifficultyManager.Instance?.CurrentSettings;
-        if (!settings.useTurrets)       // change it later
+        if (!settings.useTurrets)
         {
             gameObject.SetActive(false);
             return;
@@ -24,24 +24,25 @@ public class Turret : MonoBehaviour
         fireRate = settings.turretFireRate;
         damage = settings.turretFireDamage;
 
-        player = FindFirstObjectByType<PlayerHealth>();
+        _player = FindFirstObjectByType<PlayerHealth>();
 
         StartCoroutine(FireRoutine());
     }
 
     private void Update()
     {
-        // rotates towards player to shoot (自分をプレイヤーに向ける)
-        turretHead.LookAt(playerTargetPoint);
+        // 自分をプレイヤーに向ける
+        turretHead.LookAt(_playerTargetPoint);
     }
 
     IEnumerator FireRoutine()
     {
-        while (player)
+        while (_player)
         {
             yield return new WaitForSeconds(fireRate);
+            // TODO: change to object pooling
             Projectile newProjectile = Instantiate(projectilePrefab, projectileSpawnPoint.position, Quaternion.identity).GetComponent<Projectile>();
-            newProjectile.transform.LookAt(playerTargetPoint);
+            newProjectile.transform.LookAt(_playerTargetPoint);
             newProjectile.Init(damage);
         }
     }

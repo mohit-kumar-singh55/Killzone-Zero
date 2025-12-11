@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// このクラスは、指定した半径内の PlayerHealth にダメージを与えることで爆発効果を生成する
+/// </summary>
 public class Explosion : MonoBehaviour
 {
     [SerializeField] float radius = 1.5f;

@@ -1,6 +1,10 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// ゲーム全体を管理するクラス
+/// </summary>
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -10,16 +14,17 @@ public class GameManager : MonoBehaviour
     UIManager uiManager;
 
     public bool MenuActive { get => menuActive; }
-    public bool GameEnded { get => gameEnded; set => gameEnded = value; }
 
     void OnEnable()
     {
         WaveManager.OnWin += TriggerWin;
+        PlayerHealth.OnPlayerDie += TriggerLose;
     }
 
     void OnDisable()
     {
         WaveManager.OnWin -= TriggerWin;
+        PlayerHealth.OnPlayerDie -= TriggerLose;
     }
 
     void Awake()
@@ -40,10 +45,11 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        // メニューを開く
         if (Input.GetKeyDown(KeyCode.Escape) && !gameEnded) SetShowMenu();
     }
 
-    public void SetShowMenu()
+    private void SetShowMenu()
     {
         menuActive = !menuActive;
         uiManager.ShowMenuUI(menuActive);
@@ -51,32 +57,36 @@ public class GameManager : MonoBehaviour
         ShowCursor(menuActive);
     }
 
-    void ShowCursor(bool show = true)
+    private void ShowCursor(bool show = true)
     {
         Cursor.lockState = show ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = show;
     }
 
-    public void TriggerWin()
+    private void TriggerWin()
     {
         if (gameEnded) return;
 
-        gameEnded = true;
+        GameOverSequence();
         uiManager.ShowWinUI(true);
-        Time.timeScale = 0;
-        ShowCursor(true);
     }
 
-    public void TriggerLose()
+    private void TriggerLose()
     {
         if (gameEnded) return;
 
-        gameEnded = true;
+        GameOverSequence();
         uiManager.ShowGameOverUI(true);
+    }
+
+    private void GameOverSequence()
+    {
+        gameEnded = true;
         Time.timeScale = 0;
         ShowCursor(true);
     }
 
+    // *** UI から呼び出される ***
     public void RestartLevel()
     {
         Time.timeScale = 1f;
@@ -87,8 +97,15 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         DifficultyManager.Instance.DestroyDifficultyManager();
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene(SCENES.MAIN_MENU);
     }
 
-    public void QuitButton() => Application.Quit();
+    public void QuitButton()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
 }

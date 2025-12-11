@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -22,9 +23,17 @@ namespace StarterAssets
 		public bool cursorLocked = true;
 		public bool cursorInputForLook = true;
 
+		public static event Action<bool> OnShootEvent = delegate { };
+		public static event Action<bool> OnZoomEvent = delegate { };
+
 		void Start()
 		{
 			SetCursorState(true);
+		}
+
+		void Update()
+		{
+			if (shoot) OnShootEvent?.Invoke(shoot);
 		}
 
 #if ENABLE_INPUT_SYSTEM
@@ -91,6 +100,7 @@ namespace StarterAssets
 		public void ZoomInput(bool newZoomState)
 		{
 			zoom = newZoomState;
+			OnZoomEvent?.Invoke(zoom);
 		}
 
 		private void OnApplicationFocus(bool hasFocus)

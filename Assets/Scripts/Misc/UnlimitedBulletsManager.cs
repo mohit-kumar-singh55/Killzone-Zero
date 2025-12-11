@@ -4,11 +4,9 @@ public class UnlimitedBulletsManager : MonoBehaviour
 {
     public static UnlimitedBulletsManager Instance { get; private set; }
 
-    public static readonly string UNLIMITED_BULLETS_KEY = "UnlimitedBullets";
+    private bool _unlimitedBullets = false;
 
-    private bool unlimitedBullets = false;
-
-    public bool UnlimitedBullets => unlimitedBullets;
+    public bool UnlimitedBullets => _unlimitedBullets;
 
     void Awake()
     {
@@ -23,6 +21,6 @@ public class UnlimitedBulletsManager : MonoBehaviour
 
     void Start()
     {
-        unlimitedBullets = PlayerPrefs.GetInt(UNLIMITED_BULLETS_KEY, 1) == 1;
+        _unlimitedBullets = PlayerPrefs.GetInt(PLAYER_PREFS.UNLIMITED_BULLETS_KEY, 1) == 1;
     }
 }

@@ -6,6 +6,7 @@ public class WeaponPickup : Pickup
 
     protected override void OnPickup(ActiveWeapon activeWeapon)
     {
+        // 銃を変える
         activeWeapon.SwitchWeapon(weaponSO);
     }
 }

@@ -1,38 +1,38 @@
 using UnityEngine;
 
+/// <summary>
+/// Turretの弾
+/// </summary>
+[RequireComponent(typeof(Rigidbody))]
 public class Projectile : MonoBehaviour
 {
     [SerializeField] float speed = 30f;
     [SerializeField] GameObject projectileHitVFX;
 
-    Rigidbody rb;
+    private Rigidbody _rb;
 
-    int damage;
+    private int _damage;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        _rb = GetComponent<Rigidbody>();
     }
 
     private void Start()
     {
-        // ** overriding some settings as per difficulty **
+        // ** 難易度に応じて一部の設定を上書きする **
         DifficultySettings settings = DifficultyManager.Instance?.CurrentSettings;
         speed = settings.turretProjectileSpeed;
 
-        rb.linearVelocity = transform.forward * speed;
+        _rb.linearVelocity = transform.forward * speed;
     }
 
-    public void Init(int damage)
-    {
-        this.damage = damage;
-    }
+    public void Init(int damage) => _damage = damage;
 
     private void OnTriggerEnter(Collider other)
     {
-        // player health
-        PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
-        playerHealth?.TakeDamage(damage);
+        // プレイヤーにダメージを与える
+        if (other.TryGetComponent(out PlayerHealth playerHealth)) playerHealth.TakeDamage(_damage);
 
         // hit vfx
         Instantiate(projectileHitVFX, transform.position, Quaternion.identity);

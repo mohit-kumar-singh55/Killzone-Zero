@@ -1,28 +1,21 @@
 using UnityEngine;
 
-public class EnemyHealth : MonoBehaviour
+/// <summary>
+/// このクラスは敵の体力を管理し、ダメージ処理と体力がゼロになった際の自己破壊を行う
+/// </summary>
+public class EnemyHealth : Health
 {
     [SerializeField] GameObject robotExplosionVFX;
-    [Tooltip("Enemy health only works when firing with raycast! (敵の体力はレイキャストでのみ有効!)")]
-    [SerializeField] int startingHealth = 3;
 
-    int currentHealth;
-
-    void Awake()
+    public override void TakeDamage(int amount)
     {
-        currentHealth = startingHealth;
-    }
-
-    public void TakeDamage(int amount)
-    {
-        currentHealth -= amount;
-
+        base.TakeDamage(amount);
         if (currentHealth <= 0) SelfDestruct();
     }
 
     public void SelfDestruct()
     {
-        WaveManager.Instance.AdjustEnemyCount(-1);      // deleting one enemy
+        WaveManager.Instance.AdjustEnemyCount(-1);      // 敵を1体削除する
         AudioManager.Instance.PlayEnemyExplosionSFX();      // sfx
         Instantiate(robotExplosionVFX, transform.position, Quaternion.identity);        // vfx
         Destroy(gameObject);

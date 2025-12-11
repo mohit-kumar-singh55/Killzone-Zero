@@ -1,6 +1,9 @@
 using TMPro;
 using UnityEngine;
 
+/// <summary>
+/// 複数の UI 要素とその状態を管理し、テキスト更新・表示／非表示切り替え・勝敗状態の制御を行うクラス
+/// </summary>
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance { get; private set; }

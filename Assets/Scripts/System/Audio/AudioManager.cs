@@ -10,7 +10,7 @@ public class AudioManager : MonoBehaviour
     public AudioClip gunShotSFX;
     public AudioClip enmeyExplosionSFX;
 
-    private AudioSource audioSource;
+    private AudioSource _audioSource;
 
     void Awake()
     {
@@ -27,12 +27,12 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
-        audioSource = GetComponent<AudioSource>();
+        _audioSource = GetComponent<AudioSource>();
     }
 
-    public void PlayGunShotSFX(float volume = .4f) => audioSource.PlayOneShot(gunShotSFX, volume);
+    public void PlayGunShotSFX(float volume = .4f) => _audioSource.PlayOneShot(gunShotSFX, volume);
 
-    public void PlayEnemyExplosionSFX(float volume = .4f) => audioSource.PlayOneShot(enmeyExplosionSFX, volume);
+    public void PlayEnemyExplosionSFX(float volume = .4f) => _audioSource.PlayOneShot(enmeyExplosionSFX, volume);
 
     void ValidateFields()
     {
