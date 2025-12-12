@@ -1,24 +1,21 @@
 .button {
-    font-size: 40px;
     margin-top: 20px;
     margin-right: 20px;
     margin-bottom: 20px;
     margin-left: 20px;
-    transition-property: scale;
+    transition-property: all;
     transition-duration: 0.2s;
     padding-top: 10px;
     padding-right: 10px;
     padding-bottom: 10px;
     padding-left: 10px;
-    width: 200px;
-    color: rgb(255, 255, 255);
     text-shadow: 2px 2px 5px rgba(197, 39, 39, 0.3);
+    justify-content: center;
+    align-self: flex-start;
 }
 
 .button:hover {
     scale: 1.2 1.2;
-    transition-duration: 0.2s;
-    transition-property: scale;
 }
 
 .back_button {
